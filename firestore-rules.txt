@@ -1,0 +1,26 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users can read/write their own profile
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Allow authenticated users to read job listings
+    match /jobs/{document} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null; // You may want to restrict this to recruiters only later
+    }
+    
+    // Allow authenticated users to read/write applications
+    match /applications/{document} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Allow authenticated users to read/write companies (for recruiters)
+    match /companies/{document} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null; // You may want to restrict this to company owners later
+    }
+  }
+}
