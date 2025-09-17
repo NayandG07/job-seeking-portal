@@ -24,13 +24,11 @@ export function AuthProvider({ children }) {
   // Fetch user profile from Firestore
   const fetchUserProfile = async (user) => {
     try {
-      console.log('Fetching profile for user:', user.uid);
       const userDocRef = doc(db, 'users', user.uid);
       const userDocSnap = await getDoc(userDocRef);
 
       if (userDocSnap.exists()) {
         const data = userDocSnap.data();
-        console.log('Profile found in Firestore:', data);
         
         const profile = {
           uid: user.uid,
@@ -48,7 +46,6 @@ export function AuthProvider({ children }) {
         return profile;
       }
 
-      console.log('No profile document found in Firestore');
       return null;
     } catch (error) {
       console.error('Error fetching user profile:', error);
@@ -59,7 +56,6 @@ export function AuthProvider({ children }) {
   // Create user profile in Firestore
   const createUserProfile = async (user, displayName, role) => {
     try {
-      console.log('Creating user profile:', { uid: user.uid, displayName, role });
       const userProfile = {
         uid: user.uid,
         email: user.email || '',
@@ -76,7 +72,6 @@ export function AuthProvider({ children }) {
       const userDocRef = doc(db, 'users', user.uid);
       await setDoc(userDocRef, userProfile);
 
-      console.log('User profile created successfully');
       return userProfile;
     } catch (error) {
       console.error('Error creating user profile:', error);
@@ -224,17 +219,14 @@ export function AuthProvider({ children }) {
   // Listen for auth state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      console.log('Auth state changed:', { user: !!user, uid: user?.uid });
       setUser(user);
 
       if (user) {
         // Fetch user profile
         const profile = await fetchUserProfile(user);
-        console.log('Fetched profile:', { profile: !!profile });
         
         // If profile doesn't exist, create a basic one for existing users
         if (!profile) {
-          console.log('No profile found, creating basic profile');
           try {
             const basicProfile = await createUserProfile(
               user, 

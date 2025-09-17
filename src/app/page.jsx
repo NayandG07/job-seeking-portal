@@ -142,18 +142,6 @@ export default function Home() {
         </div>
 
         {/* Development Notice */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-          <div className="p-6 bg-yellow-50 border border-yellow-200 rounded-xl">
-            <h4 className="text-lg font-medium text-yellow-800 mb-2">
-              🚧 Development Version
-            </h4>
-            <p className="text-yellow-700">
-              This is a development version using Firebase emulators. Your data is
-              stored locally for testing purposes.
-            </p>
-          </div>
-        </div>
-
         {/* Footer */}
         <footer className="bg-gray-900 text-white py-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

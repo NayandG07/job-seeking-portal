@@ -752,9 +752,6 @@ video {
 .mt-10 {
   margin-top: 2.5rem;
 }
-.mt-12 {
-  margin-top: 3rem;
-}
 .mt-2 {
   margin-top: 0.5rem;
 }
@@ -1032,9 +1029,6 @@ video {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-.break-all {
-  word-break: break-all;
 }
 .rounded {
   border-radius: 0.25rem;
@@ -1364,9 +1358,6 @@ video {
   padding-top: 2rem;
   padding-bottom: 2rem;
 }
-.pb-16 {
-  padding-bottom: 4rem;
-}
 .pl-3 {
   padding-left: 0.75rem;
 }
@@ -1384,9 +1375,6 @@ video {
 }
 .text-right {
   text-align: right;
-}
-.font-mono {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 .text-2xl {
   font-size: 1.5rem;
@@ -1577,10 +1565,6 @@ video {
 .text-yellow-600 {
   --tw-text-opacity: 1;
   color: rgb(202 138 4 / var(--tw-text-opacity, 1));
-}
-.text-yellow-700 {
-  --tw-text-opacity: 1;
-  color: rgb(161 98 7 / var(--tw-text-opacity, 1));
 }
 .text-yellow-800 {
   --tw-text-opacity: 1;
@@ -2025,10 +2009,6 @@ button {
 
   .sm\:grid-cols-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .sm\:grid-cols-3 {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .sm\:flex-row {

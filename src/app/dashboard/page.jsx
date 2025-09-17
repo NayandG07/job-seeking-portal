@@ -206,31 +206,6 @@ export default function DashboardPage() {
               );
             })}
           </div>
-
-          {/* Development Info */}
-          <div className="mt-12 p-6 bg-yellow-50 border border-yellow-200 rounded-xl">
-            <h4 className="text-lg font-medium text-yellow-800 mb-3">
-              🚧 Development Mode
-            </h4>
-            <p className="text-yellow-700 mb-4">
-              This is a development version using Firebase emulators. 
-              Your data is stored locally and will not persist between sessions.
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
-              <div className="bg-yellow-100 p-3 rounded-lg">
-                <p className="font-medium text-yellow-800">User ID</p>
-                <p className="text-yellow-700 font-mono text-xs break-all">{user.uid}</p>
-              </div>
-              <div className="bg-yellow-100 p-3 rounded-lg">
-                <p className="font-medium text-yellow-800">Email</p>
-                <p className="text-yellow-700">{user.email}</p>
-              </div>
-              <div className="bg-yellow-100 p-3 rounded-lg">
-                <p className="font-medium text-yellow-800">Role</p>
-                <p className="text-yellow-700 capitalize">{userProfile.role}</p>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </Layout>

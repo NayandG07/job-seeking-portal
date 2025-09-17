@@ -58,8 +58,7 @@ export async function uploadLogo(file, companyId) {
 export async function deleteLogo(publicId) {
   try {
     // For client-side deletion, we'd need to make a call to our API route
-    // For now, we'll just log it (logos will accumulate in Cloudinary during development)
-    console.log('Logo deletion requested for:', publicId);
+    // For now, logos will accumulate in Cloudinary during development
     // TODO: Implement server-side deletion via API route
   } catch (error) {
     console.error('Error deleting logo:', error);
