@@ -8,6 +8,7 @@ import Button from '../common/Button.jsx';
 import Input, { Select } from '../common/Input.jsx';
 import Alert from '../common/Alert.jsx';
 import PasswordStrength from './PasswordStrength.jsx';
+import GoogleSignInButton from './GoogleSignInButton.jsx';
 
 export default function SignUpForm({ onToggleMode, onSuccess, defaultRole = 'student' }) {
   const [formData, setFormData] = useState({
@@ -18,11 +19,12 @@ export default function SignUpForm({ onToggleMode, onSuccess, defaultRole = 'stu
     role: defaultRole,
   });
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState({});
   const [touched, setTouched] = useState({});
 
-  const { signUp } = useAuth();
+  const { signUp, signUpWithGoogle } = useAuth();
   const toast = useToast();
 
   // Update role when defaultRole changes
@@ -169,6 +171,38 @@ export default function SignUpForm({ onToggleMode, onSuccess, defaultRole = 'stu
     }
   };
 
+  const handleGoogleSignUp = async () => {
+    setError('');
+    setGoogleLoading(true);
+
+    try {
+      await signUpWithGoogle(formData.role);
+      toast.success(`Welcome to Job Seeking Portal! Your ${formData.role} account has been created successfully with Google.`);
+      onSuccess?.();
+    } catch (err) {
+      if (err instanceof FirebaseError) {
+        switch (err.code) {
+          case 'auth/popup-closed-by-user':
+            setError('Sign-up was cancelled. Please try again.');
+            break;
+          case 'auth/popup-blocked':
+            setError('Pop-up was blocked. Please allow pop-ups and try again.');
+            break;
+          case 'auth/account-exists-with-different-credential':
+            setError('An account already exists with the same email but different sign-in method.');
+            break;
+          default:
+            setError('Failed to create account with Google. Please try again.');
+        }
+      } else {
+        setError('An unexpected error occurred. Please try again.');
+      }
+      toast.error('Google sign up failed. Please try again.');
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
+
   return (
     <div className="w-full">
       <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
@@ -256,13 +290,28 @@ export default function SignUpForm({ onToggleMode, onSuccess, defaultRole = 'stu
         <Button
           type="submit"
           loading={loading}
-          disabled={loading || Object.keys(fieldErrors).length > 0}
+          disabled={loading || googleLoading || Object.keys(fieldErrors).length > 0}
           variant="success"
           className="w-full"
           size="lg"
         >
           {loading ? 'Creating Account...' : 'Create Account'}
         </Button>
+
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-gray-300" />
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="px-2 bg-white text-gray-500">Or continue with</span>
+          </div>
+        </div>
+
+        <GoogleSignInButton
+          onClick={handleGoogleSignUp}
+          loading={googleLoading}
+          children={`Create ${formData.role} account with Google`}
+        />
 
         <div className="text-center">
           <button

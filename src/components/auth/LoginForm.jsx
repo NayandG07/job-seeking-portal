@@ -8,18 +8,20 @@ import Button from '../common/Button.jsx';
 import Input from '../common/Input.jsx';
 import Alert from '../common/Alert.jsx';
 import PasswordResetModal from './PasswordResetModal.jsx';
+import GoogleSignInButton from './GoogleSignInButton.jsx';
 
 export default function LoginForm({ onToggleMode, onSuccess }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [rememberMe, setRememberMe] = useState(false);
   const [showResetModal, setShowResetModal] = useState(false);
 
-  const { signIn, userProfile } = useAuth();
+  const { signIn, signInWithGoogle, userProfile } = useAuth();
   const toast = useToast();
 
   // Validation function
@@ -133,6 +135,38 @@ export default function LoginForm({ onToggleMode, onSuccess }) {
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    setError('');
+    setGoogleLoading(true);
+
+    try {
+      await signInWithGoogle();
+      toast.success('Welcome! You have been signed in successfully with Google.');
+      onSuccess?.();
+    } catch (err) {
+      if (err instanceof FirebaseError) {
+        switch (err.code) {
+          case 'auth/popup-closed-by-user':
+            setError('Sign-in was cancelled. Please try again.');
+            break;
+          case 'auth/popup-blocked':
+            setError('Pop-up was blocked. Please allow pop-ups and try again.');
+            break;
+          case 'auth/account-exists-with-different-credential':
+            setError('An account already exists with the same email but different sign-in method.');
+            break;
+          default:
+            setError('Failed to sign in with Google. Please try again.');
+        }
+      } else {
+        setError('An unexpected error occurred. Please try again.');
+      }
+      toast.error('Google sign in failed. Please try again.');
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
+
   return (
     <div className="w-full">
       <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
@@ -201,12 +235,26 @@ export default function LoginForm({ onToggleMode, onSuccess }) {
         <Button
           type="submit"
           loading={loading}
-          disabled={loading || Object.keys(fieldErrors).length > 0}
+          disabled={loading || googleLoading || Object.keys(fieldErrors).length > 0}
           className="w-full"
           size="lg"
         >
           {loading ? 'Signing In...' : 'Sign In'}
         </Button>
+
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-gray-300" />
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="px-2 bg-white text-gray-500">Or continue with</span>
+          </div>
+        </div>
+
+        <GoogleSignInButton
+          onClick={handleGoogleSignIn}
+          loading={googleLoading}
+        />
 
         <div className="text-center">
           <button

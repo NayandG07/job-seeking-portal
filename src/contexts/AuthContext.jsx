@@ -10,9 +10,10 @@ import {
   updatePassword,
   updateProfile,
   sendEmailVerification,
+  signInWithPopup,
 } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { auth, db } from '../lib/firebaseClient.js';
+import { auth, db, googleProvider } from '../lib/firebaseClient.js';
 
 const AuthContext = createContext(undefined);
 
@@ -120,6 +121,50 @@ export function AuthProvider({ children }) {
       return credential;
     } catch (error) {
       console.error('Error signing in:', error);
+      throw error;
+    }
+  };
+
+  // Google Sign In function
+  const signInWithGoogle = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+
+      // Check if user profile exists, if not create one
+      const userDocRef = doc(db, 'users', user.uid);
+      const userDocSnap = await getDoc(userDocRef);
+
+      if (!userDocSnap.exists()) {
+        // Create profile for new Google user with default role
+        await createUserProfile(user, user.displayName || 'User', 'student');
+      }
+
+      return result;
+    } catch (error) {
+      console.error('Error signing in with Google:', error);
+      throw error;
+    }
+  };
+
+  // Google Sign Up function (with role selection)
+  const signUpWithGoogle = async (role = 'student') => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+
+      // Check if user profile exists
+      const userDocRef = doc(db, 'users', user.uid);
+      const userDocSnap = await getDoc(userDocRef);
+
+      if (!userDocSnap.exists()) {
+        // Create profile for new Google user with specified role
+        await createUserProfile(user, user.displayName || 'User', role);
+      }
+
+      return result;
+    } catch (error) {
+      console.error('Error signing up with Google:', error);
       throw error;
     }
   };
@@ -257,6 +302,8 @@ export function AuthProvider({ children }) {
     loading,
     signUp,
     signIn,
+    signInWithGoogle,
+    signUpWithGoogle,
     logout,
     refreshUserProfile,
     resetPassword,
